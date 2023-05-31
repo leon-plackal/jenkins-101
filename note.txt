@@ -1,0 +1,19 @@
+docker build -t myjenkins-blueocean:2.332.3-1 . --> creates docker image of jenkins + install some plugins
+docker network create jenkins --> create jenkins network
+
+docker run --name jenkins-blueocean --restart=on-failure --detach `
+  --network jenkins --env DOCKER_HOST=tcp://docker:2376 `
+  --env DOCKER_CERT_PATH=/certs/client --env DOCKER_TLS_VERIFY=1 `
+  --volume jenkins-data:/var/jenkins_home `
+  --volume jenkins-docker-certs:/certs/client:ro `
+  --publish 8080:8080 --publish 50000:50000 myjenkins-blueocean:2.332.3-1
+//run docker file
+
+since its in a container:
+docker exec jenkins-blueocean cat /var/jenkins_home/secrets/initialAdminPassword
+// to get the password, enter it into jenkins login at localhost:8080
+// install suggested plugins
+// create an admin and login --> takes you to the jenkins UI
+
+Trigger build by git change with command */5 * * * * in jenkins configure > Build Triggers > Poll SCM
+- builds every 5 minutes if there is a change detected
